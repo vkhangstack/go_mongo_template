@@ -7,5 +7,7 @@ import (
 )
 
 func UserRoute(e *echo.Echo) {
-	e.POST("/user", controllers.CreateUser) // create user
+	e.POST("/user", controllers.CreateUser)     // create user
+	e.POST("/auth/login", controllers.Login)    //
+	e.POST("/auth/register", controllers.Login) //
 }

@@ -34,12 +34,17 @@ func CreateUser(c echo.Context) error {
 	if validationErr := validate.Struct(&user); validationErr != nil {
 		return c.JSON(http.StatusBadRequest, responses.BaseResponse{Status: http.StatusBadRequest, Message: "error", Data: &echo.Map{"data": validationErr.Error()}})
 	}
+	password, err := models.HashPassword(user.Password)
+
+	if err != nil {
+		return err
+	}
 
 	newUser := models.User{
 		Id:       primitive.NewObjectID(),
-		Name:     user.Name,
-		Location: user.Location,
-		Title:    user.Title,
+		Username: user.Username,
+		Password: password,
+		Email:    user.Email,
 	}
 
 	result, err := userCollection.InsertOne(ctx, newUser)
@@ -54,5 +59,11 @@ func CreateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, responses.BaseResponse{
-		Status: http.StatusAccepted, Message: "success", Data: &echo.Map{"data": info}})
+		Status: http.StatusCreated, Message: "success", Data: &echo.Map{"data": info}})
+}
+
+func Login(c echo.Context) error {
+
+	return c.JSON(http.StatusOK, responses.BaseResponse{
+		Status: http.StatusAccepted, Message: "success", Data: &echo.Map{"data": "info"}})
 }
